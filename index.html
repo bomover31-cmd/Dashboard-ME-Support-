@@ -276,6 +276,51 @@ body.light{--bg:#F0F2F6;--s0:#fff;--s1:#fff;--s2:#F5F7FA;--s3:#E8EDF5;--ln:#DDE3
   nav{padding:0 10px;gap:8px}
   .page{padding:12px 12px 40px}
 }
+
+/* ─── ADMIN ─── */
+.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px}
+.lock-box{background:var(--s1);border:1px solid var(--ln2);border-radius:14px;padding:32px;width:360px;max-width:95vw;text-align:center}
+.lock-icon{font-size:48px;margin-bottom:8px}
+.lock-title{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.lock-sub{font-size:12px;color:var(--txt3);margin-bottom:20px}
+.lock-inp{width:100%;background:var(--s2);border:1px solid var(--ln2);border-radius:8px;padding:10px 14px;font-size:14px;text-align:center;letter-spacing:4px;color:var(--txt);margin-bottom:12px}
+.lock-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-dim)}
+.lock-err{font-size:12px;color:var(--red);margin-top:-6px;margin-bottom:10px;min-height:16px}
+.lock-btn{width:100%;padding:10px;background:var(--cyan);color:#080C12;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--display)}
+.lock-btn:hover{background:#22E5FF}
+.admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.admin-title{font-size:18px;font-weight:700}
+.admin-logout{padding:6px 12px;background:var(--red-dim);border:1px solid rgba(239,68,68,.3);border-radius:6px;font-size:12px;color:var(--red);cursor:pointer;font-family:var(--display)}
+.admin-logout:hover{background:var(--red);color:#fff}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.admin-card{background:var(--s1);border:1px solid var(--ln);border-radius:10px;overflow:hidden}
+.admin-card-head{padding:11px 14px;border-bottom:1px solid var(--ln);background:var(--s2);display:flex;align-items:center;justify-content:space-between}
+.admin-card-title{font-size:12px;font-weight:700;letter-spacing:.3px}
+.admin-card-body{padding:14px}
+.form-field{margin-bottom:10px}
+.form-field label{display:block;font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.form-field input,.form-field select{width:100%;background:var(--s2);border:1px solid var(--ln2);border-radius:6px;padding:8px 10px;font-size:12px;color:var(--txt)}
+.form-field input:focus,.form-field select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px var(--cyan-dim)}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.admin-submit{width:100%;padding:9px;background:var(--cyan);color:#080C12;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--display);margin-top:4px}
+.admin-submit:hover{background:#22E5FF}
+.admin-submit.danger{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,46,.3)}
+.admin-submit.danger:hover{background:var(--red);color:#fff}
+.device-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--ln)}
+.device-row:last-child{border-bottom:none}
+.device-info{flex:1;font-size:12px}
+.device-serial{font-family:var(--mono);font-size:11px;color:var(--cyan)}
+.device-loc{font-size:10px;color:var(--txt3);margin-top:1px}
+.device-actions{display:flex;gap:5px}
+.dev-btn{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid;font-family:var(--display)}
+.dev-edit{background:var(--blue-dim,#3B82F620);color:var(--bp3);border-color:rgba(59,130,246,.3)}
+.dev-edit:hover{background:var(--bp3);color:#fff}
+.dev-del{background:var(--red-dim);color:var(--red);border-color:rgba(239,68,68,.3)}
+.dev-del:hover{background:var(--red);color:#fff}
+.admin-search{width:100%;background:var(--s2);border:1px solid var(--ln);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--txt);margin-bottom:12px}
+.admin-search:focus{border-color:var(--cyan)}
+.admin-search::placeholder{color:var(--txt3)}
+
 </style>
 </head>
 <body>
@@ -292,6 +337,7 @@ body.light{--bg:#F0F2F6;--s0:#fff;--s1:#fff;--s2:#F5F7FA;--s3:#E8EDF5;--ln:#DDE3
     <div class="ntab"     data-page="map">2D Map</div>
     <div class="ntab"     data-page="calib">Calibration</div>
     <div class="ntab"     data-page="audit">Audit Log</div>
+    <div class="ntab" data-page="admin" style="color:var(--warn)">🔐 Admin</div>
   </div>
   <div class="nav-r">
     <button class="nb export" id="btnExport">↓ Export CSV</button>
@@ -401,6 +447,7 @@ body.light{--bg:#F0F2F6;--s0:#fff;--s1:#fff;--s2:#F5F7FA;--s3:#E8EDF5;--ln:#DDE3
 <div class="page"    id="p-map"></div>
 <div class="page"    id="p-calib"></div>
 <div class="page"    id="p-audit"></div>
+<div class="page"    id="p-admin"></div>
 
 <script>
 // ── DATA ──
@@ -543,10 +590,18 @@ function getEdits(){try{return JSON.parse(localStorage.getItem('sd_v3')||'{}')}c
 function setEdits(e){localStorage.setItem('sd_v3',JSON.stringify(e))}
 function allDevices(){
   var ed=getEdits();
-  return RAW.map(function(d,i){
+  // Base RAW devices (skip deleted)
+  var result = RAW.map(function(d,i){
     var id='D'+String(i+1).padStart(3,'0');
     return Object.assign({},d,{id:id},ed[id]||{});
+  }).filter(function(d){ return !d._deleted; });
+  // Add custom devices added via Admin panel
+  Object.keys(ed).forEach(function(id){
+    if(id.indexOf('CUSTOM_')===0 && !ed[id]._deleted){
+      result.push(Object.assign({id:id},ed[id]));
+    }
   });
+  return result;
 }
 
 // ── SETTINGS ──
@@ -1109,9 +1164,251 @@ function renderAudit(){
        + '</div>';
 }
 
+
+// ══════════════════════════════════════════════
+//  ADMIN PANEL
+// ══════════════════════════════════════════════
+var ADMIN_PASS_KEY = 'sd_admin_auth';
+var ADMIN_PASSWORD = 'Delta@ME2024'; // ← เปลี่ยน password ได้ที่นี่
+var adminSearch = '';
+
+function isAdminAuth(){
+  return sessionStorage.getItem(ADMIN_PASS_KEY) === 'ok';
+}
+function adminLogin(){
+  var inp = document.getElementById('adminPassInp');
+  var err = document.getElementById('adminErr');
+  if(!inp) return;
+  if(inp.value === ADMIN_PASSWORD){
+    sessionStorage.setItem(ADMIN_PASS_KEY,'ok');
+    addAudit('Setting','Admin login สำเร็จ');
+    renderPage();
+  } else {
+    err.textContent = '❌ Password ไม่ถูกต้อง';
+    inp.value = '';
+    inp.focus();
+    setTimeout(function(){if(err)err.textContent='';},3000);
+  }
+}
+function adminLogout(){
+  sessionStorage.removeItem(ADMIN_PASS_KEY);
+  addAudit('Setting','Admin logout');
+  renderPage();
+}
+
+function renderAdmin(){
+  if(!isAdminAuth()) return renderAdminLock();
+  return renderAdminPanel();
+}
+
+function renderAdminLock(){
+  return '<div class="lock-screen">'
+    +'<div class="lock-box">'
+    +'<div class="lock-icon">🔐</div>'
+    +'<div class="lock-title">ME Team Admin</div>'
+    +'<div class="lock-sub">ใส่ password เพื่อแก้ไขข้อมูล<br>QA/QC และบุคคลทั่วไปดูได้อย่างเดียว</div>'
+    +'<input class="lock-inp" id="adminPassInp" type="password" placeholder="••••••••••••" '
+    +'onkeydown="if(event.key===\'Enter\')adminLogin()">'
+    +'<div class="lock-err" id="adminErr"></div>'
+    +'<button class="lock-btn" onclick="adminLogin()">🔓 เข้าสู่ระบบ</button>'
+    +'</div></div>';
+}
+
+function renderAdminPanel(){
+  var all = allDevices();
+  var filtered = adminSearch
+    ? all.filter(function(d){
+        var q = adminSearch.toLowerCase();
+        return (d.serial||'').toLowerCase().includes(q)
+          || (d.line||'').toLowerCase().includes(q)
+          || (d.station||'').toLowerCase().includes(q)
+          || (d.bldg||'').toLowerCase().includes(q);
+      })
+    : all;
+
+  var allLines = [...new Set(all.map(function(d){return d.line}))].sort();
+  var allBldgs = ['BP3','BP9'];
+
+  return '<div class="admin-head">'
+    +'<div class="admin-title">🔐 Admin Panel — จัดการข้อมูล</div>'
+    +'<button class="admin-logout" onclick="adminLogout()">ออกจากระบบ</button>'
+    +'</div>'
+
+    // ── ADD NEW DEVICE ──
+    +'<div class="admin-card" style="margin-bottom:14px">'
+    +'<div class="admin-card-head"><div class="admin-card-title">➕ เพิ่มอุปกรณ์ใหม่</div></div>'
+    +'<div class="admin-card-body">'
+    +'<div class="form-2col">'
+    +'<div class="form-field"><label>Building</label>'
+    +'<select id="add-bldg"><option value="BP3">BP3</option><option value="BP9">BP9</option></select></div>'
+    +'<div class="form-field"><label>Floor</label>'
+    +'<select id="add-floor"><option value="1">Floor 1</option><option value="2">Floor 2</option></select></div>'
+    +'<div class="form-field"><label>Line</label>'
+    +'<input id="add-line" placeholder="เช่น CD3-03, CDS1" list="lineList">'
+    +'<datalist id="lineList">'+allLines.map(function(l){return'<option value="'+l+'">'}).join('')+'</datalist></div>'
+    +'<div class="form-field"><label>Station</label>'
+    +'<input id="add-station" placeholder="เช่น CA-01, SS01"></div>'
+    +'<div class="form-field"><label>Serial No. *</label>'
+    +'<input id="add-serial" placeholder="เช่น T26100036"></div>'
+    +'<div class="form-field"><label>Model</label>'
+    +'<select id="add-model">'
+    +'<option value="ECM-SD3-F12S0">ECM-SD3-F12S0</option>'
+    +'<option value="ECM-SD3-F50S0">ECM-SD3-F50S0</option>'
+    +'<option value="ECM-SD3-F30S0">ECM-SD3-F30S0</option>'
+    +'<option value="ASD-SD3041B-2">ASD-SD3041B-2 (Controller)</option>'
+    +'<option value="ASD-SD3021B-1">ASD-SD3021B-1 (Controller)</option>'
+    +'</select></div>'
+    +'<div class="form-field"><label>Status</label>'
+    +'<select id="add-status"><option value="active">Active</option><option value="offline">Offline</option><option value="spare">Spare</option></select></div>'
+    +'<div class="form-field"><label>Calib. Due Date</label>'
+    +'<input id="add-calib" type="date" value="2027-01-01"></div>'
+    +'</div>'
+    +'<button class="admin-submit" onclick="adminAddDevice()">➕ เพิ่มอุปกรณ์</button>'
+    +'</div></div>'
+
+    // ── DEVICE LIST ──
+    +'<div class="admin-card">'
+    +'<div class="admin-card-head">'
+    +'<div class="admin-card-title">📋 รายการทั้งหมด ('+all.length+' เครื่อง)</div>'
+    +'<span style="font-size:10px;color:var(--txt3);font-family:var(--mono)">แก้ไข / ลบได้</span>'
+    +'</div>'
+    +'<div style="padding:12px 14px">'
+    +'<input class="admin-search" placeholder="🔍 ค้นหา Serial · Line · Station · Building..." '
+    +'value="'+adminSearch+'" oninput="adminSearch=this.value;renderPage()">'
+    +'<div style="max-height:480px;overflow-y:auto">'
+    +filtered.map(function(d){
+      var rowHtml = '<div class="device-row">'
+        +'<div class="device-info">'
+        +'<div class="device-serial">'+d.serial+'</div>'
+        +'<div class="device-loc">'+d.bldg+' · '+d.line+' · '+d.station+' · '+d.model.replace('ECM-SD3-','').replace('ASD-','')+' · '+sBadge(d.status)+'</div>'
+        +'</div>'
+        +'<div class="device-actions">'
+        +'<button class="dev-btn dev-edit" data-edit="'+d.id+'">✏️ แก้</button>'
+        +'<button class="dev-btn dev-del" data-del="'+d.id+'" data-serial="'+d.serial+'">🗑️ ลบ</button>'
+        +'</div></div>';
+      return rowHtml;
+    }).join('')
+    +(filtered.length===0?'<div style="padding:20px;text-align:center;color:var(--txt3);font-size:12px">ไม่พบรายการ</div>':'')
+    +'</div></div></div>';
+}
+
+// ── ADD DEVICE ──
+function adminAddDevice(){
+  if(!isAdminAuth()) return;
+  var serial = document.getElementById('add-serial').value.trim();
+  if(!serial){ alert('กรุณากรอก Serial No.'); return; }
+  var all = allDevices();
+  // Check duplicate
+  if(all.find(function(d){return d.serial === serial})){
+    alert('Serial No. นี้มีอยู่แล้วในระบบ'); return;
+  }
+  var ed = getEdits();
+  var newId = 'CUSTOM_' + Date.now();
+  ed[newId] = {
+    _isCustom: true,
+    bldg:     document.getElementById('add-bldg').value,
+    floor:    parseInt(document.getElementById('add-floor').value),
+    line:     document.getElementById('add-line').value.trim(),
+    station:  document.getElementById('add-station').value.trim(),
+    serial:   serial,
+    model:    document.getElementById('add-model').value,
+    status:   document.getElementById('add-status').value,
+    calibDue: document.getElementById('add-calib').value,
+    updatedAt: new Date().toISOString(),
+  };
+  setEdits(ed);
+  addAudit('Add','เพิ่มเครื่องใหม่: '+serial+' ('+document.getElementById('add-line').value+' · '+document.getElementById('add-station').value+')');
+  updateBadge();
+  // Clear form
+  document.getElementById('add-serial').value = '';
+  document.getElementById('add-station').value = '';
+  alert('✅ เพิ่มสำเร็จ: '+serial);
+  renderPage();
+}
+
+// ── EDIT DEVICE MODAL ──
+function adminEditModal(id){
+  if(!isAdminAuth()) return;
+  var all = allDevices();
+  var d = all.find(function(x){return x.id===id});
+  if(!d) return;
+  var allLines = [...new Set(all.map(function(x){return x.line}))].sort();
+  document.getElementById('modalRoot').innerHTML =
+    '<div class="overlay" onclick="if(event.target===this)closeModal()">'
+    +'<div class="modal">'
+    +'<div class="mh"><div><div class="mt">✏️ แก้ไข — '+d.serial+'</div>'
+    +'<div class="ms">'+d.bldg+' · '+d.line+' · '+d.station+'</div></div>'
+    +'<div class="mx" onclick="closeModal()">✕</div></div>'
+    +'<div class="mb">'
+    +'<div class="form-2col">'
+    +'<div class="form-field"><label>Building</label>'
+    +'<select id="e-bldg"><option value="BP3"'+(d.bldg==='BP3'?' selected':'')+'>BP3</option><option value="BP9"'+(d.bldg==='BP9'?' selected':'')+'>BP9</option></select></div>'
+    +'<div class="form-field"><label>Floor</label>'
+    +'<select id="e-floor"><option value="1"'+(d.floor===1?' selected':'')+'>Floor 1</option><option value="2"'+(d.floor===2?' selected':'')+'>Floor 2</option></select></div>'
+    +'<div class="form-field"><label>Line</label>'
+    +'<input id="e-line" value="'+d.line+'" list="eLineList">'
+    +'<datalist id="eLineList">'+allLines.map(function(l){return'<option value="'+l+'">'}).join('')+'</datalist></div>'
+    +'<div class="form-field"><label>Station</label>'
+    +'<input id="e-station" value="'+d.station+'"></div>'
+    +'<div class="form-field"><label>Serial No.</label>'
+    +'<input id="e-serial" value="'+d.serial+'"></div>'
+    +'<div class="form-field"><label>Model</label>'
+    +'<select id="e-model">'
+    +['ECM-SD3-F12S0','ECM-SD3-F50S0','ECM-SD3-F30S0','ASD-SD3041B-2','ASD-SD3021B-1'].map(function(m){
+        return '<option value="'+m+'"'+(d.model===m?' selected':'')+'>'+m+'</option>';
+      }).join('')
+    +'</select></div>'
+    +'<div class="form-field"><label>Status</label>'
+    +'<select id="e-status">'
+    +['active','offline','spare'].map(function(s){return'<option value="'+s+'"'+(d.status===s?' selected':'')+'>'+s+'</option>'}).join('')
+    +'</select></div>'
+    +'<div class="form-field"><label>Calib. Due</label>'
+    +'<input id="e-calib" type="date" value="'+d.calibDue+'"></div>'
+    +'</div></div>'
+    +'<div class="mf">'
+    +'<button class="btn btn-g" onclick="closeModal()">ยกเลิก</button>'
+    +'<button class="btn btn-p" id="adminSaveBtn" data-id="'+id+'">💾 บันทึก</button>'
+    +'</div></div></div>';
+}
+
+function adminSaveEdit(id){
+  if(!isAdminAuth()) return;
+  var ed = getEdits();
+  if(!ed[id]) ed[id] = {};
+  var prev = allDevices().find(function(d){return d.id===id});
+  var newSerial = document.getElementById('e-serial').value.trim();
+  ed[id].bldg     = document.getElementById('e-bldg').value;
+  ed[id].floor    = parseInt(document.getElementById('e-floor').value);
+  ed[id].line     = document.getElementById('e-line').value.trim();
+  ed[id].station  = document.getElementById('e-station').value.trim();
+  ed[id].serial   = newSerial;
+  ed[id].model    = document.getElementById('e-model').value;
+  ed[id].status   = document.getElementById('e-status').value;
+  ed[id].calibDue = document.getElementById('e-calib').value;
+  ed[id].updatedAt = new Date().toISOString();
+  setEdits(ed);
+  addAudit('Update','แก้ไข '+newSerial+' → '+ed[id].line+' · '+ed[id].station+' · '+ed[id].status);
+  updateBadge();
+  closeModal();
+  renderPage();
+}
+
+// ── DELETE DEVICE ──
+function adminDeleteDevice(id, serial){
+  if(!isAdminAuth()) return;
+  if(!confirm('ลบ '+serial+' ออกจากระบบ?\nไม่สามารถกู้คืนได้')) return;
+  var ed = getEdits();
+  if(!ed[id]) ed[id] = {};
+  ed[id]._deleted = true;
+  setEdits(ed);
+  addAudit('Delete','ลบเครื่อง: '+serial);
+  renderPage();
+}
+
+
 // ── ROUTING ──
 var curPage='overview';
-var PAGES={overview:renderOverview,tracker:renderTracker,map:renderMap,calib:renderCalib,audit:renderAudit};
+var PAGES={overview:renderOverview,tracker:renderTracker,map:renderMap,calib:renderCalib,audit:renderAudit,admin:renderAdmin};
 function renderPage(){
   var el=document.getElementById('p-'+curPage);
   if(el){el.innerHTML=PAGES[curPage]();}
@@ -1177,6 +1474,18 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('defBldg').addEventListener('change',function(){saveCfg()});
   document.getElementById('defStatus').addEventListener('change',function(){saveCfg()});
   document.getElementById('newColInp').addEventListener('keydown',function(e){if(e.key==='Enter')addCustomCol()});
+  // Admin panel event delegation (avoids inline onclick quote issues)
+  document.addEventListener('click',function(e){
+    // Edit button
+    var editBtn = e.target.closest('[data-edit]');
+    if(editBtn){ adminEditModal(editBtn.dataset.edit); return; }
+    // Delete button
+    var delBtn = e.target.closest('[data-del]');
+    if(delBtn){ adminDeleteDevice(delBtn.dataset.del, delBtn.dataset.serial); return; }
+    // Save edit button
+    var saveBtn = e.target.closest('#adminSaveBtn');
+    if(saveBtn){ adminSaveEdit(saveBtn.dataset.id); return; }
+  });
   // Close notif on outside click
   document.addEventListener('click',function(e){
     var p=document.getElementById('notifPanel');
